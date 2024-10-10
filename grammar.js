@@ -13,23 +13,27 @@ const PREC = {
   ASSIGNMENT: -2,
   CONDITIONAL: -1,
   DEFAULT: 0,
-  LOGICAL_OR: 1,
-  LOGICAL_AND: 2,
-  INCLUSIVE_OR: 3,
-  EXCLUSIVE_OR: 4,
-  BITWISE_AND: 5,
-  EQUAL: 6,
-  RELATIONAL: 7,
-  OFFSETOF: 8,
-  SHIFT: 9,
-  ADD: 10,
-  MULTIPLY: 11,
-  CAST: 12,
-  SIZEOF: 13,
-  UNARY: 14,
-  CALL: 15,
-  FIELD: 16,
-  SUBSCRIPT: 17,
+  QUANTIFIER: 1,
+  CONNECTIVE: 2,
+  LOGICAL_OR: 3,
+  LOGICAL_AND: 4,
+  INCLUSIVE_OR: 5,
+  EXCLUSIVE_OR: 6,
+  BITWISE_AND: 7,
+  EQUAL: 8,
+  RELATIONAL: 9,
+  OFFSETOF: 10,
+  SHIFT: 11,
+  TYPED: 12,
+  ADD: 13,
+  MULTIPLY: 14,
+  CAST: 15,
+  SIZEOF: 16,
+  UNARY: 17,
+  OLDMARK: 18,
+  CALL: 19,
+  FIELD: 20,
+  SUBSCRIPT: 21,
 };
 
 module.exports = grammar({
@@ -53,6 +57,9 @@ module.exports = grammar({
     [$._top_level_item, $._top_level_statement],
     [$.type_specifier, $._top_level_expression_statement],
     [$.type_qualifier, $.extension_expression],
+
+    [$.type_specifier, $.assertion],
+    [$.type_specifier, $.assertion, $.macro_type_specifier],
   ],
 
   extras: $ => [
@@ -67,11 +74,16 @@ module.exports = grammar({
     $._non_case_statement,
     $._assignment_left_expression,
     $._expression_not_binary,
+    $._assertion_not_binary,
   ],
 
   supertypes: $ => [
     $.expression,
     $.statement,
+    $.assertion,
+    $.annotation,
+    $.kind,
+    $.atype,
     $.type_specifier,
     $._declarator,
     $._field_declarator,
@@ -90,6 +102,7 @@ module.exports = grammar({
       alias($._old_style_function_definition, $.function_definition),
       $.linkage_specification,
       $.declaration,
+      $.annotation,
       $._top_level_statement,
       $.attributed_statement,
       $.type_definition,
@@ -108,6 +121,7 @@ module.exports = grammar({
       $.linkage_specification,
       $.declaration,
       $.statement,
+      $.annotation,
       $.attributed_statement,
       $.type_definition,
       $._empty_declaration,
@@ -242,6 +256,7 @@ module.exports = grammar({
       $._declaration_specifiers,
       optional($.ms_call_modifier),
       field('declarator', $._declarator),
+      optional(field('specification', $.specification)),
       field('body', $.compound_statement),
     ),
 
@@ -477,6 +492,7 @@ module.exports = grammar({
       seq(
         field('declarator', $._declarator),
         field('parameters', $.parameter_list),
+        optional(field('specification', $.specification)),
         optional($.gnu_asm_expression),
         repeat(choice(
           $.attribute_specifier,
@@ -490,6 +506,7 @@ module.exports = grammar({
       seq(
         field('declarator', $._declarator),
         field('parameters', $.parameter_list),
+        optional(field('specification', $.specification)),
         optional($.gnu_asm_expression),
         repeat($.attribute_specifier),
       )),
@@ -941,6 +958,386 @@ module.exports = grammar({
       '__leave', ';',
     ),
 
+    // Annotations
+
+    _mark_identifier: $ => alias($.identifier, $.mark_identifier),
+    _scope_identifier: $ => alias($.identifier, $.scope_identifier),
+    _spec_identifier: $ => alias($.identifier, $.spec_identifier),
+
+    annotation: $ => choice(
+      $.assertion_annotation,
+      $.invariant_annotation,
+      $.which_implies_annotation,
+      $.do_annotation,
+      $.extern_term_annotation,
+      $.extern_type_annotation,
+      $.import_coq_annotation,
+      $.include_strategy_annotation,
+      // $.extern_alias_annotation,
+      // $.extern_field_annotation,
+      // $.extern_record_annotation,
+    ),
+
+    assertion_annotation: $ => annotation(seq(
+      optional('Assert'),
+      field('assertion', $.assertion),
+      optional(seq('@mark', field('mark', $._mark_identifier))),
+      optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+    )),
+
+    invariant_annotation: $ => annotation(seq(
+      'Inv',
+      optional('Assert'),
+      field('assertion', $.assertion),
+      optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+    )),
+
+    which_implies_annotation: $ => annotation(seq(
+      field('precondition', $.assertion),
+      optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+      'which', 'implies',
+      field('postcondition', $.assertion),
+      optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+    )),
+
+    do_annotation: $ => annotation(seq(
+      'do',
+      $._scope_identifier,
+    )),
+
+    extern_term_annotation: $ => annotation(seq(
+      'Extern', 'Coq',
+      repeat1(seq(
+        '(',
+        field('variable', repeat1($.identifier)),
+        ':',
+        field('type', $.full_atype),
+        ')',
+      )),
+    )),
+
+    extern_type_annotation: $ => annotation(seq(
+      'Extern', 'Coq',
+      repeat1(seq(
+        '(',
+        field('variable', repeat1($.identifier)),
+        '::',
+        field('kind', $.kind),
+        ')',
+      )),
+    )),
+
+    import_coq_annotation: $ => annotation(seq(
+      'Import', 'Coq',
+      /[.A-Za-z0-9_ \t]*/
+    )),
+
+    include_strategy_annotation: $ => annotation(seq(
+      'include', 'strategies', $.string_literal,
+    )),
+
+    specification: $ => annotation(choice(seq(
+      optional(seq(
+        field('name', $._spec_identifier),
+        optional(seq('<=', field('paren', $._spec_identifier))),
+      )),
+      optional(seq(
+        'With',
+        field(
+          'universal_type',
+          repeat(seq(
+            '{',
+            field('variable', repeat1($.identifier)),
+            optional(seq(
+              '::', field('kind', $.kind),
+            )),
+            '}',
+          )),
+        ),
+        field(
+          'universal_term',
+          repeat(choice(
+            field('variable', $.identifier),
+            seq(
+              '(',
+              field('variable', repeat1($.identifier)),
+              ':',
+              field('type', $.atype),
+              ')'
+            ),
+          )),
+        ),
+      )),
+      'Require',
+      field('precondition', $.assertion),
+      'Ensure',
+      field('postcondition', $.assertion),
+    ), field('name', $._spec_identifier))),
+
+    virtual_argument: $ => annotation(seq(
+      'where',
+      optional(seq('(', $._scope_identifier, ')')),
+      optional(field(
+          'term_argument',
+          commaSep(seq(
+            field('parameter', $.identifier),
+            '=',
+            field('argument', $.assertion),
+          ))
+      )),
+      optional(seq(
+        ';',
+        field(
+          'type_argument',
+          commaSep(seq(
+            field('parameter', $.identifier),
+            '=',
+            field('argument', $.atype),
+          ))
+        ),
+      )),
+      optional(seq('by', repeat1($._scope_identifier))),
+    )),
+
+    // Kinds
+
+    kind: $ => choice(
+      $.star_kind,
+      $.arrow_kind,
+      $.parenthesized_kind,
+    ),
+
+    star_kind: $ => '*',
+
+    arrow_kind: $ => prec.right(seq(
+      field('left', $.kind),
+      '=>',
+      field('right', $.kind),
+    )),
+
+    parenthesized_kind: $ => seq(
+      '(',
+      $.kind,
+      ')',
+    ),
+
+    // Types
+
+    atype: $ => choice(
+      $.identifier,
+      $.arrow_atype,
+      $.apply_atype,
+      $.parenthesized_atype,
+    ),
+
+    arrow_atype: $ => prec.right(0, seq(
+      field('left', $.atype),
+      '->',
+      field('right', $.atype),
+    )),
+
+    apply_atype: $ => prec.left(1, seq(
+      field('left', $.atype),
+      field('right', $.atype),
+    )),
+
+    parenthesized_atype: $ => seq(
+      '(',
+      $.atype,
+      ')',
+    ),
+
+    full_atype: $ => seq(
+      optional(seq(
+        field('parameter',
+              repeat1(seq(
+                '{',
+                field('variable', repeat1($.identifier)),
+                optional(seq('::', field('kind', $.kind))),
+                '}'))),
+        '->',
+      )),
+      field('body', $.atype)
+    ),
+
+    // Assertions
+
+    assertion: $ => choice(
+      $._assertion_not_binary,
+      $.binary_assertion,
+    ),
+
+    assertion_argument_list: $ => seq('(', commaSep($.assertion), ')'),
+
+    _assertion_not_binary: $ => choice(
+      $.unary_assertion,
+      $.cast_assertion,
+      $.pointer_assertion,
+      $.sizeof_assertion,
+      $.subscript_assertion,
+      $.call_assertion,
+      $.field_assertion,
+      $.identifier,
+      $.number_literal,
+      $.parenthesized_assertion,
+
+      // new
+      $.typed_assertion,
+      $.quantified_assertion,
+      'emp',
+      '__return',
+      // TODO: for highlighting. why?? 
+      $.oldmark_assertion,
+      $.shadow_assertion,
+      $.data_at_assertion,
+      $.undef_data_at_assertion,
+      $.field_address_assertion,
+      // TODO: $.spec_assertion
+    ),
+
+    unary_assertion: $ => prec.left(PREC.UNARY, seq(
+      field('operator', choice('!', '~', '-', '+')),
+      field('argument', $.assertion),
+    )),
+
+    binary_assertion: $ => {
+      const table = [
+        ['+', PREC.ADD],
+        ['-', PREC.ADD],
+        ['*', PREC.MULTIPLY],
+        ['/', PREC.MULTIPLY],
+        ['%', PREC.MULTIPLY],
+        ['||', PREC.LOGICAL_OR],
+        ['&&', PREC.LOGICAL_AND],
+        ['|', PREC.INCLUSIVE_OR],
+        ['^', PREC.EXCLUSIVE_OR],
+        ['&', PREC.BITWISE_AND],
+        ['==', PREC.EQUAL],
+        ['!=', PREC.EQUAL],
+        ['>', PREC.RELATIONAL],
+        ['>=', PREC.RELATIONAL],
+        ['<=', PREC.RELATIONAL],
+        ['<', PREC.RELATIONAL],
+        ['<<', PREC.SHIFT],
+        ['>>', PREC.SHIFT],
+        ['=>', PREC.CONNECTIVE],
+        ['<=>', PREC.CONNECTIVE],
+      ];
+
+      return choice(...table.map(([operator, precedence]) => {
+        return prec.left(precedence, seq(
+          field('left', $.assertion),
+          // @ts-ignore
+          field('operator', operator),
+          field('right', $.assertion),
+        ));
+      }));
+    },
+
+    cast_assertion: $ => prec(PREC.CAST, seq(
+      '(',
+      field('type', $.type_descriptor),
+      ')',
+      field('value', $.assertion),
+    )),
+
+    pointer_assertion: $ => prec.left(PREC.CAST, seq(
+      field('operator', choice('*', '&')),
+      field('argument', $.assertion),
+    )),
+
+    sizeof_assertion: $ => prec(PREC.SIZEOF, seq(
+      'sizeof',
+      seq('(', field('type', $.type_descriptor), ')'),
+    )),
+
+    subscript_assertion: $ => prec(PREC.SUBSCRIPT, seq(
+      field('argument', $.assertion),
+      '[',
+      field('index', $.assertion),
+      ']',
+    )),
+
+    call_assertion: $ => prec(PREC.CALL, seq(
+      field('function', $.assertion),
+      field('arguments', $.assertion_argument_list),
+    )),
+
+    field_assertion: $ => seq(
+      prec(PREC.FIELD, seq(
+        field('argument', $.assertion),
+        field('operator', choice('.', '->')),
+      )),
+      field('field', $._field_identifier),
+    ),
+
+    parenthesized_assertion: $ => seq(
+      '(',
+      $.assertion,
+      ')',
+    ),
+
+    quantified_assertion: $ => prec.left(PREC.QUANTIFIER, seq(
+      field('operator', choice('exists', 'forall')),
+      field('variable', repeat(choice(
+        field('variable', $.identifier),
+        seq(
+          '(',
+          field('variable', repeat1($.identifier)),
+          ':',
+          field('type', $.full_atype),
+          ')'
+        ),
+      ))), // TODO type
+      ',',
+      field('argument', $.assertion),
+    )),
+
+    typed_assertion: $ => prec(PREC.TYPED, seq(
+      field('argument', $.assertion),
+      ':',
+      field('type', $.atype),
+    )),
+
+    shadow_assertion: $ => seq(
+      '#',
+      choice($.shadow_assertion, $.identifier),
+    ),
+
+    oldmark_assertion: $ => prec(PREC.OLDMARK, seq(
+      field('argument', $.assertion),
+      '@',
+      field('mark', $._mark_identifier),
+    )),
+
+    data_at_assertion: $ => prec(PREC.CALL, seq(
+      'data_at',
+      '(',
+      field('address', $.assertion),
+      ',',
+      optional(seq(field('type', $.type_descriptor), ',')),
+      field('value', $.assertion),
+      ')',
+    )),
+
+    undef_data_at_assertion: $ => prec(PREC.CALL, seq(
+      'undef_data_at',
+      '(',
+      field('address', $.assertion),
+      optional(seq(',', field('type', $.type_descriptor))),
+      ')',
+    )),
+
+    field_address_assertion: $ => prec(PREC.CALL, seq(
+      'field_address',
+      '(',
+      field('pointer', $.assertion),
+      optional(seq(',', field('type', $.type_descriptor))),
+      ',',
+      field('field', $._field_identifier),
+      ')',
+    )),
+
     // Expressions
 
     expression: $ => choice(
@@ -1123,6 +1520,7 @@ module.exports = grammar({
     call_expression: $ => prec(PREC.CALL, seq(
       field('function', $.expression),
       field('arguments', $.argument_list),
+      optional(field('virtual_arguments', $.virtual_argument)),
     )),
 
     gnu_asm_expression: $ => prec(PREC.CALL, seq(
@@ -1359,9 +1757,10 @@ module.exports = grammar({
 
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
     comment: _ => token(choice(
-      seq('//', /(\\+(.|\r?\n)|[^\\\n])*/),
+      seq('//', /[^@]/, /(\\+(.|\r?\n)|[^\\\n])*/),
       seq(
         '/*',
+        /[^@]/,
         /[^*]*\*+([^/*][^*]*\*+)*/,
         '/',
       ),
@@ -1467,4 +1866,18 @@ function commaSep(rule) {
  */
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
+}
+
+/**
+ * Creates a rule in an annotation
+ *
+ * @param {Rule} rule
+ *
+ * @returns {ChoiceRule}
+ */
+function annotation(rule) {
+  return choice(
+    seq('//@', rule, '\r?\n'),
+    seq('/*@', rule, '*/'),
+  );
 }

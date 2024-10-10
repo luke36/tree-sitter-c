@@ -116,6 +116,152 @@
     ]
   },
   {
+    "type": "annotation",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "assertion_annotation",
+        "named": true
+      },
+      {
+        "type": "do_annotation",
+        "named": true
+      },
+      {
+        "type": "extern_term_annotation",
+        "named": true
+      },
+      {
+        "type": "extern_type_annotation",
+        "named": true
+      },
+      {
+        "type": "import_coq_annotation",
+        "named": true
+      },
+      {
+        "type": "include_strategy_annotation",
+        "named": true
+      },
+      {
+        "type": "invariant_annotation",
+        "named": true
+      },
+      {
+        "type": "which_implies_annotation",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "assertion",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "__return",
+        "named": false
+      },
+      {
+        "type": "binary_assertion",
+        "named": true
+      },
+      {
+        "type": "call_assertion",
+        "named": true
+      },
+      {
+        "type": "cast_assertion",
+        "named": true
+      },
+      {
+        "type": "data_at_assertion",
+        "named": true
+      },
+      {
+        "type": "emp",
+        "named": false
+      },
+      {
+        "type": "field_address_assertion",
+        "named": true
+      },
+      {
+        "type": "field_assertion",
+        "named": true
+      },
+      {
+        "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "number_literal",
+        "named": true
+      },
+      {
+        "type": "oldmark_assertion",
+        "named": true
+      },
+      {
+        "type": "parenthesized_assertion",
+        "named": true
+      },
+      {
+        "type": "pointer_assertion",
+        "named": true
+      },
+      {
+        "type": "quantified_assertion",
+        "named": true
+      },
+      {
+        "type": "shadow_assertion",
+        "named": true
+      },
+      {
+        "type": "sizeof_assertion",
+        "named": true
+      },
+      {
+        "type": "subscript_assertion",
+        "named": true
+      },
+      {
+        "type": "typed_assertion",
+        "named": true
+      },
+      {
+        "type": "unary_assertion",
+        "named": true
+      },
+      {
+        "type": "undef_data_at_assertion",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "atype",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "apply_atype",
+        "named": true
+      },
+      {
+        "type": "arrow_atype",
+        "named": true
+      },
+      {
+        "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "parenthesized_atype",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "expression",
     "named": true,
     "subtypes": [
@@ -221,6 +367,24 @@
       },
       {
         "type": "update_expression",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "kind",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "arrow_kind",
+        "named": true
+      },
+      {
+        "type": "parenthesized_kind",
+        "named": true
+      },
+      {
+        "type": "star_kind",
         "named": true
       }
     ]
@@ -480,6 +644,32 @@
     }
   },
   {
+    "type": "apply_atype",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "argument_list",
     "named": true,
     "fields": {},
@@ -545,6 +735,109 @@
       "types": [
         {
           "type": "type_qualifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "arrow_atype",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "arrow_kind",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "assertion_annotation",
+    "named": true,
+    "fields": {
+      "assertion": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "mark": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "mark_identifier",
+            "named": true
+          }
+        ]
+      },
+      "scope": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "scope_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "assertion_argument_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "assertion",
           "named": true
         }
       ]
@@ -759,6 +1052,118 @@
     }
   },
   {
+    "type": "binary_assertion",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "!=",
+            "named": false
+          },
+          {
+            "type": "%",
+            "named": false
+          },
+          {
+            "type": "&",
+            "named": false
+          },
+          {
+            "type": "&&",
+            "named": false
+          },
+          {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "/",
+            "named": false
+          },
+          {
+            "type": "<",
+            "named": false
+          },
+          {
+            "type": "<<",
+            "named": false
+          },
+          {
+            "type": "<=",
+            "named": false
+          },
+          {
+            "type": "<=>",
+            "named": false
+          },
+          {
+            "type": "==",
+            "named": false
+          },
+          {
+            "type": "=>",
+            "named": false
+          },
+          {
+            "type": ">",
+            "named": false
+          },
+          {
+            "type": ">=",
+            "named": false
+          },
+          {
+            "type": ">>",
+            "named": false
+          },
+          {
+            "type": "^",
+            "named": false
+          },
+          {
+            "type": "|",
+            "named": false
+          },
+          {
+            "type": "||",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "binary_expression",
     "named": true,
     "fields": {
@@ -891,6 +1296,32 @@
     "fields": {}
   },
   {
+    "type": "call_assertion",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion_argument_list",
+            "named": true
+          }
+        ]
+      },
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "call_expression",
     "named": true,
     "fields": {
@@ -910,6 +1341,16 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "virtual_arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "virtual_argument",
             "named": true
           }
         ]
@@ -1004,6 +1445,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "cast_assertion",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_descriptor",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1115,6 +1582,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "declaration",
           "named": true
@@ -1231,6 +1702,42 @@
     "fields": {}
   },
   {
+    "type": "data_at_assertion",
+    "named": true,
+    "fields": {
+      "address": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_descriptor",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "declaration",
     "named": true,
     "fields": {
@@ -1323,6 +1830,10 @@
       "required": false,
       "types": [
         {
+          "type": "annotation",
+          "named": true
+        },
+        {
           "type": "declaration",
           "named": true
         },
@@ -1368,6 +1879,21 @@
         },
         {
           "type": "type_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "do_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "scope_identifier",
           "named": true
         }
       ]
@@ -1545,6 +2071,134 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "extern_term_annotation",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "full_atype",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "extern_type_annotation",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "field_address_assertion",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_identifier",
+            "named": true
+          }
+        ]
+      },
+      "pointer": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_descriptor",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "field_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_identifier",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "->",
+            "named": false
+          },
+          {
+            "type": ".",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -1756,6 +2410,68 @@
     }
   },
   {
+    "type": "full_atype",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "::",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "kind",
+            "named": true
+          },
+          {
+            "type": "{",
+            "named": false
+          },
+          {
+            "type": "}",
+            "named": false
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "function_declarator",
     "named": true,
     "fields": {
@@ -1783,6 +2499,16 @@
         "types": [
           {
             "type": "parameter_list",
+            "named": true
+          }
+        ]
+      },
+      "specification": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "specification",
             "named": true
           }
         ]
@@ -1831,6 +2557,16 @@
         "types": [
           {
             "type": "_declarator",
+            "named": true
+          }
+        ]
+      },
+      "specification": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "specification",
             "named": true
           }
         ]
@@ -2168,6 +2904,26 @@
     }
   },
   {
+    "type": "import_coq_annotation",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "include_strategy_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "init_declarator",
     "named": true,
     "fields": {
@@ -2256,6 +3012,32 @@
           },
           {
             "type": "initializer_list",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "invariant_annotation",
+    "named": true,
+    "fields": {
+      "assertion": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "scope": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "scope_identifier",
             "named": true
           }
         ]
@@ -2451,6 +3233,32 @@
     }
   },
   {
+    "type": "oldmark_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "mark": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "mark_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "parameter_declaration",
     "named": true,
     "fields": {
@@ -2534,6 +3342,36 @@
     }
   },
   {
+    "type": "parenthesized_assertion",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "assertion",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesized_atype",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "atype",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "parenthesized_declarator",
     "named": true,
     "fields": {},
@@ -2585,6 +3423,51 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "parenthesized_kind",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "kind",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "pointer_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "&",
+            "named": false
+          },
+          {
+            "type": "*",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -2792,6 +3675,10 @@
       "required": false,
       "types": [
         {
+          "type": "annotation",
+          "named": true
+        },
+        {
           "type": "declaration",
           "named": true
         },
@@ -2888,6 +3775,10 @@
       "required": false,
       "types": [
         {
+          "type": "annotation",
+          "named": true
+        },
+        {
           "type": "declaration",
           "named": true
         },
@@ -2954,6 +3845,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "declaration",
           "named": true
@@ -3115,6 +4010,10 @@
       "required": false,
       "types": [
         {
+          "type": "annotation",
+          "named": true
+        },
+        {
           "type": "declaration",
           "named": true
         },
@@ -3210,6 +4109,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "declaration",
           "named": true
@@ -3313,6 +4216,72 @@
     }
   },
   {
+    "type": "quantified_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "exists",
+            "named": false
+          },
+          {
+            "type": "forall",
+            "named": false
+          }
+        ]
+      },
+      "type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "full_atype",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "full_atype",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "return_statement",
     "named": true,
     "fields": {},
@@ -3409,6 +4378,25 @@
     }
   },
   {
+    "type": "shadow_assertion",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "shadow_assertion",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "sized_type_specifier",
     "named": true,
     "fields": {
@@ -3439,6 +4427,22 @@
     }
   },
   {
+    "type": "sizeof_assertion",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_descriptor",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "sizeof_expression",
     "named": true,
     "fields": {
@@ -3463,6 +4467,135 @@
         ]
       }
     }
+  },
+  {
+    "type": "specification",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "spec_identifier",
+            "named": true
+          }
+        ]
+      },
+      "paren": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "spec_identifier",
+            "named": true
+          }
+        ]
+      },
+      "postcondition": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "precondition": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "universal_term": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "universal_type": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "::",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "kind",
+            "named": true
+          },
+          {
+            "type": "{",
+            "named": false
+          },
+          {
+            "type": "}",
+            "named": false
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "star_kind",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "storage_class_specifier",
@@ -3526,6 +4659,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "subscript_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "index": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3629,6 +4788,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "attributed_statement",
           "named": true
@@ -3824,6 +4987,70 @@
     }
   },
   {
+    "type": "typed_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "unary_assertion",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "!",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "~",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "unary_expression",
     "named": true,
     "fields": {
@@ -3860,6 +5087,32 @@
           {
             "type": "~",
             "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "undef_data_at_assertion",
+    "named": true,
+    "fields": {
+      "address": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_descriptor",
+            "named": true
           }
         ]
       }
@@ -3941,6 +5194,118 @@
     "fields": {}
   },
   {
+    "type": "virtual_argument",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          },
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "term_argument": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "type_argument": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "scope_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "which_implies_annotation",
+    "named": true,
+    "fields": {
+      "postcondition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "precondition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "scope": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "scope_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "while_statement",
     "named": true,
     "fields": {
@@ -3971,6 +5336,10 @@
     "named": false
   },
   {
+    "type": "\r?\n",
+    "named": false
+  },
+  {
     "type": "!",
     "named": false
   },
@@ -3980,6 +5349,10 @@
   },
   {
     "type": "\"",
+    "named": false
+  },
+  {
+    "type": "#",
     "named": false
   },
   {
@@ -4059,6 +5432,10 @@
     "named": false
   },
   {
+    "type": "*/",
+    "named": false
+  },
+  {
     "type": "*=",
     "named": false
   },
@@ -4107,6 +5484,14 @@
     "named": false
   },
   {
+    "type": "/*@",
+    "named": false
+  },
+  {
+    "type": "//@",
+    "named": false
+  },
+  {
     "type": "/=",
     "named": false
   },
@@ -4139,11 +5524,19 @@
     "named": false
   },
   {
+    "type": "<=>",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
   {
     "type": "==",
+    "named": false
+  },
+  {
+    "type": "=>",
     "named": false
   },
   {
@@ -4167,6 +5560,38 @@
     "named": false
   },
   {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@mark",
+    "named": false
+  },
+  {
+    "type": "Assert",
+    "named": false
+  },
+  {
+    "type": "Coq",
+    "named": false
+  },
+  {
+    "type": "Ensure",
+    "named": false
+  },
+  {
+    "type": "Extern",
+    "named": false
+  },
+  {
+    "type": "Import",
+    "named": false
+  },
+  {
+    "type": "Inv",
+    "named": false
+  },
+  {
     "type": "L\"",
     "named": false
   },
@@ -4179,11 +5604,19 @@
     "named": false
   },
   {
+    "type": "Require",
+    "named": false
+  },
+  {
     "type": "U\"",
     "named": false
   },
   {
     "type": "U'",
+    "named": false
+  },
+  {
+    "type": "With",
     "named": false
   },
   {
@@ -4311,6 +5744,10 @@
     "named": false
   },
   {
+    "type": "__return",
+    "named": false
+  },
+  {
     "type": "__stdcall",
     "named": false
   },
@@ -4367,6 +5804,10 @@
     "named": false
   },
   {
+    "type": "by",
+    "named": false
+  },
+  {
     "type": "case",
     "named": false
   },
@@ -4391,6 +5832,10 @@
     "named": false
   },
   {
+    "type": "data_at",
+    "named": false
+  },
+  {
     "type": "default",
     "named": false
   },
@@ -4407,12 +5852,20 @@
     "named": false
   },
   {
+    "type": "emp",
+    "named": false
+  },
+  {
     "type": "enum",
     "named": false
   },
   {
     "type": "escape_sequence",
     "named": true
+  },
+  {
+    "type": "exists",
+    "named": false
   },
   {
     "type": "extern",
@@ -4423,11 +5876,19 @@
     "named": true
   },
   {
+    "type": "field_address",
+    "named": false
+  },
+  {
     "type": "field_identifier",
     "named": true
   },
   {
     "type": "for",
+    "named": false
+  },
+  {
+    "type": "forall",
     "named": false
   },
   {
@@ -4443,12 +5904,24 @@
     "named": false
   },
   {
+    "type": "implies",
+    "named": false
+  },
+  {
+    "type": "include",
+    "named": false
+  },
+  {
     "type": "inline",
     "named": false
   },
   {
     "type": "long",
     "named": false
+  },
+  {
+    "type": "mark_identifier",
+    "named": true
   },
   {
     "type": "ms_restrict_modifier",
@@ -4503,6 +5976,10 @@
     "named": false
   },
   {
+    "type": "scope_identifier",
+    "named": true
+  },
+  {
     "type": "short",
     "named": false
   },
@@ -4515,11 +5992,19 @@
     "named": false
   },
   {
+    "type": "spec_identifier",
+    "named": true
+  },
+  {
     "type": "statement_identifier",
     "named": true
   },
   {
     "type": "static",
+    "named": false
+  },
+  {
+    "type": "strategies",
     "named": false
   },
   {
@@ -4571,6 +6056,10 @@
     "named": false
   },
   {
+    "type": "undef_data_at",
+    "named": false
+  },
+  {
     "type": "union",
     "named": false
   },
@@ -4580,6 +6069,14 @@
   },
   {
     "type": "volatile",
+    "named": false
+  },
+  {
+    "type": "where",
+    "named": false
+  },
+  {
+    "type": "which",
     "named": false
   },
   {
