@@ -973,12 +973,13 @@ module.exports = grammar({
       $.extern_type_annotation,
       $.import_coq_annotation,
       $.include_strategy_annotation,
-      // $.extern_alias_annotation,
-      // $.extern_field_annotation,
-      // $.extern_record_annotation,
+      $.extern_alias_annotation,
+      $.extern_field_annotation,
+      $.extern_record_annotation,
     ),
 
     assertion_annotation: $ => annotation(seq(
+      optional(seq('Given', field('ghost', repeat1($._term_decl_infer)), ',')),
       optional('Assert'),
       field('assertion', $.assertion),
       optional(seq('@mark', field('mark', $._mark_identifier))),
@@ -986,8 +987,8 @@ module.exports = grammar({
     )),
 
     invariant_annotation: $ => annotation(seq(
-      'Inv',
       optional('Assert'),
+      'Inv',
       field('assertion', $.assertion),
       optional(seq('by', field('scope', repeat1($._scope_identifier)))),
     )),
@@ -1005,26 +1006,28 @@ module.exports = grammar({
       $._scope_identifier,
     )),
 
+    term_decl: $ => seq(
+      '(',
+      field('variable', repeat1($.identifier)),
+      ':',
+      field('type', $.full_atype),
+      ')',
+    ),
+
     extern_term_annotation: $ => annotation(seq(
-      'Extern', 'Coq',
-      repeat1(seq(
-        '(',
-        field('variable', repeat1($.identifier)),
-        ':',
-        field('type', $.full_atype),
-        ')',
-      )),
+      'Extern', 'Coq', repeat1($.term_decl),
     )),
 
+    atype_decl: $ => seq(
+      '(',
+      field('variable', repeat1($.identifier)),
+      '::',
+      field('kind', $.kind),
+      ')',
+    ),
+
     extern_type_annotation: $ => annotation(seq(
-      'Extern', 'Coq',
-      repeat1(seq(
-        '(',
-        field('variable', repeat1($.identifier)),
-        '::',
-        field('kind', $.kind),
-        ')',
-      )),
+      'Extern', 'Coq', repeat1($.atype_decl),
     )),
 
     import_coq_annotation: $ => annotation(seq(
@@ -1036,37 +1039,29 @@ module.exports = grammar({
       'include', 'strategies', $.string_literal,
     )),
 
+    definitional_identifier: $ => $.identifier,
+
+    _term_decl_infer: $ => choice($.definitional_identifier, $.term_decl),
+
+    implicit_atype_decl: $ => seq(
+      '{',
+      field('variable', repeat1($.identifier)),
+      optional(seq(
+        '::',
+        field('kind', $.kind),
+      )),
+      '}',
+    ),
+
     specification: $ => annotation(choice(seq(
       optional(seq(
         field('name', $._spec_identifier),
-        optional(seq('<=', field('paren', $._spec_identifier))),
+        optional(seq('<=', field('parent', $._spec_identifier))),
       )),
       optional(seq(
         'With',
-        field(
-          'universal_type',
-          repeat(seq(
-            '{',
-            field('variable', repeat1($.identifier)),
-            optional(seq(
-              '::', field('kind', $.kind),
-            )),
-            '}',
-          )),
-        ),
-        field(
-          'universal_term',
-          repeat(choice(
-            field('variable', $.identifier),
-            seq(
-              '(',
-              field('variable', repeat1($.identifier)),
-              ':',
-              field('type', $.atype),
-              ')'
-            ),
-          )),
-        ),
+        field('type_variables', repeat($.implicit_atype_decl)),
+        field('variables', repeat($._term_decl_infer)),
       )),
       'Require',
       field('precondition', $.assertion),
@@ -1074,29 +1069,61 @@ module.exports = grammar({
       field('postcondition', $.assertion),
     ), field('name', $._spec_identifier))),
 
+    // todo
+
+    term_argument: $ => seq(
+      field('parameter', $.identifier),
+      '=',
+      field('argument', $.assertion),
+    ),
+
+    atype_argument: $ => seq(
+      field('parameter', $.identifier),
+      '=',
+      field('argument', $.atype),
+    ),
+
     virtual_argument: $ => annotation(seq(
       'where',
       optional(seq('(', $._scope_identifier, ')')),
-      optional(field(
-          'term_argument',
-          commaSep(seq(
-            field('parameter', $.identifier),
-            '=',
-            field('argument', $.assertion),
-          ))
-      )),
+      field('term_arguments', commaSep($.term_argument)),
       optional(seq(
         ';',
-        field(
-          'type_argument',
-          commaSep(seq(
-            field('parameter', $.identifier),
-            '=',
-            field('argument', $.atype),
-          ))
-        ),
+        field('type_argument', commaSep($.atype_argument)),
       )),
       optional(seq('by', repeat1($._scope_identifier))),
+    )),
+
+    extern_alias_annotation: $ => annotation(seq(
+      'Extern', 'Coq',
+      field('variable', $.identifier),
+      ':=',
+      field('type', $.atype),
+    )),
+
+    extern_field_annotation: $ => annotation(seq(
+      'Extern', 'Coq',
+      'Field', repeat1($.term_decl),
+    )),
+
+    record_field: $ => seq(
+      field('field', $.identifier),
+      ':',
+      field('type', $.full_atype),
+      ';',
+    ),
+
+    _atype_decl_infer: $ => choice($.definitional_identifier, $.atype_decl),
+
+    extern_record_annotation: $ => annotation(seq(
+      'Extern', 'Coq',
+      'Record',
+      field('record', $.identifier),
+      field('parameter', repeat($._atype_decl_infer)),
+      optional(seq('=', field('constructor', $.identifier))),
+      '{',
+      field('fields', repeat($.record_field)),
+      '}',
     )),
 
     // Kinds
@@ -1124,11 +1151,32 @@ module.exports = grammar({
     // Types
 
     atype: $ => choice(
+      $.z_atype,
+      $.nat_atype,
+      $.bool_atype,
+      $.list_atype,
+      $.prod_atype,
+      $.prop_atype,
+      $.assertion_atype,
       $.identifier,
       $.arrow_atype,
       $.apply_atype,
       $.parenthesized_atype,
     ),
+
+    z_atype: $ => 'Z',
+
+    nat_atype: $ => 'nat',
+
+    bool_atype: $ => 'bool',
+
+    list_atype: $ => 'list',
+
+    prod_atype: $ => 'prod',
+
+    prop_atype: $ => 'Prop',
+
+    assertion_atype: $ => 'Assertion',
 
     arrow_atype: $ => prec.right(0, seq(
       field('left', $.atype),
@@ -1148,15 +1196,7 @@ module.exports = grammar({
     ),
 
     full_atype: $ => seq(
-      optional(seq(
-        field('parameter',
-              repeat1(seq(
-                '{',
-                field('variable', repeat1($.identifier)),
-                optional(seq('::', field('kind', $.kind))),
-                '}'))),
-        '->',
-      )),
+      optional(seq(field('parameter', repeat1($.implicit_atype_decl)), '->')),
       field('body', $.atype)
     ),
 
@@ -1184,9 +1224,10 @@ module.exports = grammar({
       // new
       $.typed_assertion,
       $.quantified_assertion,
-      'emp',
-      '__return',
-      // TODO: for highlighting. why?? 
+      $.emp_assertion,
+      $.underline_return_assertion,
+      $.int_max_assertion,
+      $.int_min_assertion,
       $.oldmark_assertion,
       $.shadow_assertion,
       $.data_at_assertion,
@@ -1277,21 +1318,35 @@ module.exports = grammar({
       ')',
     ),
 
+    bracket_exist_decl: $ => seq(
+      '[',
+      field('variable', repeat1($.identifier)),
+      optional(seq(
+        ':',
+        field('type', $.full_atype),
+      )),
+      ']'
+    ),
+
+    _quantified_term_decl: $ => choice(
+      $._term_decl_infer,
+      $.bracket_exist_decl,
+    ),
+
     quantified_assertion: $ => prec.left(PREC.QUANTIFIER, seq(
       field('operator', choice('exists', 'forall')),
-      field('variable', repeat(choice(
-        field('variable', $.identifier),
-        seq(
-          '(',
-          field('variable', repeat1($.identifier)),
-          ':',
-          field('type', $.full_atype),
-          ')'
-        ),
-      ))), // TODO type
+      field('variables', repeat1($._quantified_term_decl)),
       ',',
       field('argument', $.assertion),
     )),
+
+    emp_assertion: $ => 'emp',
+
+    underline_return_assertion: $ => '__return',
+
+    int_max_assertion: $ => 'INT_MAX',
+
+    int_min_assertion: $ => 'INT_MIN',
 
     typed_assertion: $ => prec(PREC.TYPED, seq(
       field('argument', $.assertion),

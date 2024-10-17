@@ -128,6 +128,18 @@
         "named": true
       },
       {
+        "type": "extern_alias_annotation",
+        "named": true
+      },
+      {
+        "type": "extern_field_annotation",
+        "named": true
+      },
+      {
+        "type": "extern_record_annotation",
+        "named": true
+      },
+      {
         "type": "extern_term_annotation",
         "named": true
       },
@@ -158,10 +170,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "__return",
-        "named": false
-      },
-      {
         "type": "binary_assertion",
         "named": true
       },
@@ -178,8 +186,8 @@
         "named": true
       },
       {
-        "type": "emp",
-        "named": false
+        "type": "emp_assertion",
+        "named": true
       },
       {
         "type": "field_address_assertion",
@@ -191,6 +199,14 @@
       },
       {
         "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "int_max_assertion",
+        "named": true
+      },
+      {
+        "type": "int_min_assertion",
         "named": true
       },
       {
@@ -236,6 +252,10 @@
       {
         "type": "undef_data_at_assertion",
         "named": true
+      },
+      {
+        "type": "underline_return_assertion",
+        "named": true
       }
     ]
   },
@@ -252,11 +272,39 @@
         "named": true
       },
       {
+        "type": "assertion_atype",
+        "named": true
+      },
+      {
+        "type": "bool_atype",
+        "named": true
+      },
+      {
         "type": "identifier",
         "named": true
       },
       {
+        "type": "list_atype",
+        "named": true
+      },
+      {
+        "type": "nat_atype",
+        "named": true
+      },
+      {
         "type": "parenthesized_atype",
+        "named": true
+      },
+      {
+        "type": "prod_atype",
+        "named": true
+      },
+      {
+        "type": "prop_atype",
+        "named": true
+      },
+      {
+        "type": "z_atype",
         "named": true
       }
     ]
@@ -806,6 +854,20 @@
           }
         ]
       },
+      "ghost": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "definitional_identifier",
+            "named": true
+          },
+          {
+            "type": "term_decl",
+            "named": true
+          }
+        ]
+      },
       "mark": {
         "multiple": false,
         "required": false,
@@ -1052,6 +1114,58 @@
     }
   },
   {
+    "type": "atype_argument",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "atype",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "atype_decl",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "binary_assertion",
     "named": true,
     "fields": {
@@ -1288,6 +1402,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "bracket_exist_decl",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "full_atype",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1885,6 +2025,21 @@
     }
   },
   {
+    "type": "definitional_identifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "do_annotation",
     "named": true,
     "fields": {},
@@ -2074,21 +2229,21 @@
     }
   },
   {
-    "type": "extern_term_annotation",
+    "type": "extern_alias_annotation",
     "named": true,
     "fields": {
       "type": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "full_atype",
+            "type": "atype",
             "named": true
           }
         ]
       },
       "variable": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -2100,21 +2255,60 @@
     }
   },
   {
-    "type": "extern_type_annotation",
+    "type": "extern_field_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "term_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extern_record_annotation",
     "named": true,
     "fields": {
-      "kind": {
-        "multiple": true,
-        "required": true,
+      "constructor": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
-            "type": "kind",
+            "type": "identifier",
             "named": true
           }
         ]
       },
-      "variable": {
+      "fields": {
         "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "record_field",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "atype_decl",
+            "named": true
+          },
+          {
+            "type": "definitional_identifier",
+            "named": true
+          }
+        ]
+      },
+      "record": {
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -2123,6 +2317,36 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "extern_term_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "term_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "extern_type_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "atype_decl",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2423,48 +2647,12 @@
           }
         ]
       },
-      "kind": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "kind",
-            "named": true
-          }
-        ]
-      },
       "parameter": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "::",
-            "named": false
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "kind",
-            "named": true
-          },
-          {
-            "type": "{",
-            "named": false
-          },
-          {
-            "type": "}",
-            "named": false
-          }
-        ]
-      },
-      "variable": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
+            "type": "implicit_atype_decl",
             "named": true
           }
         ]
@@ -2897,6 +3085,32 @@
         "types": [
           {
             "type": "statement",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "implicit_atype_decl",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "kind",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -4243,38 +4457,46 @@
           }
         ]
       },
-      "type": {
+      "variables": {
         "multiple": true,
-        "required": false,
+        "required": true,
         "types": [
           {
-            "type": "full_atype",
+            "type": "bracket_exist_decl",
+            "named": true
+          },
+          {
+            "type": "definitional_identifier",
+            "named": true
+          },
+          {
+            "type": "term_decl",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "record_field",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
       },
-      "variable": {
-        "multiple": true,
-        "required": false,
+      "type": {
+        "multiple": false,
+        "required": true,
         "types": [
           {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ":",
-            "named": false
-          },
-          {
             "type": "full_atype",
-            "named": true
-          },
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -4472,16 +4694,6 @@
     "type": "specification",
     "named": true,
     "fields": {
-      "kind": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "kind",
-            "named": true
-          }
-        ]
-      },
       "name": {
         "multiple": false,
         "required": false,
@@ -4492,7 +4704,7 @@
           }
         ]
       },
-      "paren": {
+      "parent": {
         "multiple": false,
         "required": false,
         "types": [
@@ -4522,70 +4734,26 @@
           }
         ]
       },
-      "type": {
+      "type_variables": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "atype",
+            "type": "implicit_atype_decl",
             "named": true
           }
         ]
       },
-      "universal_term": {
+      "variables": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ":",
-            "named": false
-          },
-          {
-            "type": "atype",
-            "named": true
-          }
-        ]
-      },
-      "universal_type": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "::",
-            "named": false
-          },
-          {
-            "type": "identifier",
+            "type": "definitional_identifier",
             "named": true
           },
           {
-            "type": "kind",
-            "named": true
-          },
-          {
-            "type": "{",
-            "named": false
-          },
-          {
-            "type": "}",
-            "named": false
-          }
-        ]
-      },
-      "variable": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
+            "type": "term_decl",
             "named": true
           }
         ]
@@ -4774,6 +4942,58 @@
         "types": [
           {
             "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "term_argument",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "parameter": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "term_decl",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "full_atype",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -5197,31 +5417,7 @@
     "type": "virtual_argument",
     "named": true,
     "fields": {
-      "argument": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "assertion",
-            "named": true
-          },
-          {
-            "type": "atype",
-            "named": true
-          }
-        ]
-      },
-      "parameter": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "term_argument": {
+      "term_arguments": {
         "multiple": true,
         "required": false,
         "types": [
@@ -5230,11 +5426,7 @@
             "named": false
           },
           {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": "assertion",
+            "type": "term_argument",
             "named": true
           }
         ]
@@ -5248,11 +5440,7 @@
             "named": false
           },
           {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": "atype",
+            "type": "atype_argument",
             "named": true
           }
         ]
@@ -5504,6 +5692,10 @@
     "named": false
   },
   {
+    "type": ":=",
+    "named": false
+  },
+  {
     "type": ";",
     "named": false
   },
@@ -5584,6 +5776,14 @@
     "named": false
   },
   {
+    "type": "Field",
+    "named": false
+  },
+  {
+    "type": "Given",
+    "named": false
+  },
+  {
     "type": "Import",
     "named": false
   },
@@ -5601,6 +5801,10 @@
   },
   {
     "type": "NULL",
+    "named": false
+  },
+  {
+    "type": "Record",
     "named": false
   },
   {
@@ -5744,10 +5948,6 @@
     "named": false
   },
   {
-    "type": "__return",
-    "named": false
-  },
-  {
     "type": "__stdcall",
     "named": false
   },
@@ -5796,8 +5996,16 @@
     "named": false
   },
   {
+    "type": "assertion_atype",
+    "named": true
+  },
+  {
     "type": "auto",
     "named": false
+  },
+  {
+    "type": "bool_atype",
+    "named": true
   },
   {
     "type": "break",
@@ -5852,8 +6060,8 @@
     "named": false
   },
   {
-    "type": "emp",
-    "named": false
+    "type": "emp_assertion",
+    "named": true
   },
   {
     "type": "enum",
@@ -5916,6 +6124,18 @@
     "named": false
   },
   {
+    "type": "int_max_assertion",
+    "named": true
+  },
+  {
+    "type": "int_min_assertion",
+    "named": true
+  },
+  {
+    "type": "list_atype",
+    "named": true
+  },
+  {
     "type": "long",
     "named": false
   },
@@ -5933,6 +6153,10 @@
   },
   {
     "type": "ms_unsigned_ptr_modifier",
+    "named": true
+  },
+  {
+    "type": "nat_atype",
     "named": true
   },
   {
@@ -5961,6 +6185,14 @@
   },
   {
     "type": "primitive_type",
+    "named": true
+  },
+  {
+    "type": "prod_atype",
+    "named": true
+  },
+  {
+    "type": "prop_atype",
     "named": true
   },
   {
@@ -6060,6 +6292,10 @@
     "named": false
   },
   {
+    "type": "underline_return_assertion",
+    "named": true
+  },
+  {
     "type": "union",
     "named": false
   },
@@ -6082,6 +6318,10 @@
   {
     "type": "while",
     "named": false
+  },
+  {
+    "type": "z_atype",
+    "named": true
   },
   {
     "type": "{",
