@@ -60,6 +60,7 @@ module.exports = grammar({
 
     [$.type_specifier, $.assertion],
     [$.type_specifier, $.assertion, $.macro_type_specifier],
+    [$._atype_identifier, $.term_decl]
   ],
 
   extras: $ => [
@@ -960,9 +961,14 @@ module.exports = grammar({
 
     // Annotations
 
+    _atype_identifier: $ => alias($.identifier, $.atype_identifier),
     _mark_identifier: $ => alias($.identifier, $.mark_identifier),
     _scope_identifier: $ => alias($.identifier, $.scope_identifier),
     _spec_identifier: $ => alias($.identifier, $.spec_identifier),
+    _branch_identifier: $ => choice(
+      'all', 'unnamed',
+      alias($.identifier, $.branch_identifier)
+    ),
 
     annotation: $ => choice(
       $.assertion_annotation,
@@ -976,6 +982,9 @@ module.exports = grammar({
       $.extern_alias_annotation,
       $.extern_field_annotation,
       $.extern_record_annotation,
+      $.branch_name_annotation,
+      $.branch_clear_annotation,
+      $.branch_join_annotation,
     ),
 
     assertion_annotation: $ => annotation(seq(
@@ -984,6 +993,7 @@ module.exports = grammar({
       field('assertion', $.assertion),
       optional(seq('@mark', field('mark', $._mark_identifier))),
       optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+      optional(seq('$', field('branch', repeat1($._branch_identifier)))),
     )),
 
     invariant_annotation: $ => annotation(seq(
@@ -996,14 +1006,43 @@ module.exports = grammar({
     which_implies_annotation: $ => annotation(seq(
       field('precondition', $.assertion),
       optional(seq('by', field('scope', repeat1($._scope_identifier)))),
-      'which', 'implies',
+      seq('which', 'implies'),
       field('postcondition', $.assertion),
       optional(seq('by', field('scope', repeat1($._scope_identifier)))),
+      optional(seq('$', field('branch', repeat1($._branch_identifier)))),
     )),
 
     do_annotation: $ => annotation(seq(
       'do',
-      $._scope_identifier,
+      field('scope', $._scope_identifier),
+      field('branch', repeat1($._branch_identifier)),
+    )),
+
+    branch_selector: $ => seq(
+      field('branch', $._branch_identifier),
+      ':',
+      field('condition', $.assertion),
+    ),
+
+    branch_selector_list: $ => seq(
+      repeat(seq($.branch_selector, ';')),
+      $.branch_selector,
+    ),
+
+    branch_name_annotation: $ => annotation(seq(
+      seq('Branch', 'name'),
+      $.branch_selector_list,
+    )),
+
+    branch_clear_annotation: $ => annotation(seq(
+      seq('Branch', 'clear'), repeat1($._branch_identifier),
+    )),
+
+    branch_join_annotation: $ => annotation(seq(
+      seq('Branch', 'join'),
+      field('branch', repeat1($._branch_identifier)),
+      optional(seq('into', field('new_name', $._branch_identifier))),
+      'with', optional('Assert'), field('join', $.assertion),
     )),
 
     term_decl: $ => seq(
@@ -1015,37 +1054,38 @@ module.exports = grammar({
     ),
 
     extern_term_annotation: $ => annotation(seq(
-      'Extern', 'Coq', repeat1($.term_decl),
+      seq('Extern', 'Coq'), repeat1($.term_decl),
     )),
 
     atype_decl: $ => seq(
       '(',
-      field('variable', repeat1($.identifier)),
+      field('variable', repeat1($._atype_identifier)),
       '::',
       field('kind', $.kind),
       ')',
     ),
 
     extern_type_annotation: $ => annotation(seq(
-      'Extern', 'Coq', repeat1($.atype_decl),
+      seq('Extern', 'Coq'), repeat1($.atype_decl),
     )),
 
     import_coq_annotation: $ => annotation(seq(
-      'Import', 'Coq',
+      seq('Import', 'Coq'),
       /[.A-Za-z0-9_ \t]*/
     )),
 
     include_strategy_annotation: $ => annotation(seq(
-      'include', 'strategies', $.string_literal,
+      seq('include', 'strategies'), $.string_literal,
     )),
 
     definitional_identifier: $ => $.identifier,
+    definitional_atype_identifier: $ => $._atype_identifier,
 
     _term_decl_infer: $ => choice($.definitional_identifier, $.term_decl),
 
     implicit_atype_decl: $ => seq(
       '{',
-      field('variable', repeat1($.identifier)),
+      field('variable', repeat1($._atype_identifier)),
       optional(seq(
         '::',
         field('kind', $.kind),
@@ -1078,14 +1118,14 @@ module.exports = grammar({
     ),
 
     atype_argument: $ => seq(
-      field('parameter', $.identifier),
+      field('parameter', $._atype_identifier),
       '=',
       field('argument', $.atype),
     ),
 
     virtual_argument: $ => annotation(seq(
       'where',
-      optional(seq('(', $._scope_identifier, ')')),
+      optional(seq('(', $._spec_identifier, ')')),
       field('term_arguments', commaSep($.term_argument)),
       optional(seq(
         ';',
@@ -1095,14 +1135,14 @@ module.exports = grammar({
     )),
 
     extern_alias_annotation: $ => annotation(seq(
-      'Extern', 'Coq',
+      seq('Extern', 'Coq'),
       field('variable', $.identifier),
       ':=',
       field('type', $.atype),
     )),
 
     extern_field_annotation: $ => annotation(seq(
-      'Extern', 'Coq',
+      seq('Extern', 'Coq'),
       'Field', repeat1($.term_decl),
     )),
 
@@ -1113,17 +1153,17 @@ module.exports = grammar({
       ';',
     ),
 
-    _atype_decl_infer: $ => choice($.definitional_identifier, $.atype_decl),
+    _atype_decl_infer: $ => choice($.definitional_atype_identifier, $.atype_decl),
 
     extern_record_annotation: $ => annotation(seq(
-      'Extern', 'Coq',
+      seq('Extern', 'Coq'),
       'Record',
       field('record', $.identifier),
       field('parameter', repeat($._atype_decl_infer)),
       optional(seq('=', field('constructor', $.identifier))),
-      '{',
-      field('fields', repeat($.record_field)),
-      '}',
+      seq('{',
+          field('fields', repeat($.record_field)),
+          '}',),
     )),
 
     // Kinds
@@ -1158,7 +1198,7 @@ module.exports = grammar({
       $.prod_atype,
       $.prop_atype,
       $.assertion_atype,
-      $.identifier,
+      $._atype_identifier,
       $.arrow_atype,
       $.apply_atype,
       $.parenthesized_atype,
@@ -1178,13 +1218,13 @@ module.exports = grammar({
 
     assertion_atype: $ => 'Assertion',
 
-    arrow_atype: $ => prec.right(0, seq(
+    arrow_atype: $ => prec.right(100, seq(
       field('left', $.atype),
       '->',
       field('right', $.atype),
     )),
 
-    apply_atype: $ => prec.left(1, seq(
+    apply_atype: $ => prec.left(101, seq(
       field('left', $.atype),
       field('right', $.atype),
     )),
@@ -1348,11 +1388,11 @@ module.exports = grammar({
 
     int_min_assertion: $ => 'INT_MIN',
 
-    typed_assertion: $ => prec(PREC.TYPED, seq(
-      field('argument', $.assertion),
+    typed_assertion: $ => seq(
+      prec(PREC.TYPED, field('argument', $.assertion)),
       ':',
       field('type', $.atype),
-    )),
+    ),
 
     shadow_assertion: $ => seq(
       '#',
@@ -1367,30 +1407,30 @@ module.exports = grammar({
 
     data_at_assertion: $ => prec(PREC.CALL, seq(
       'data_at',
-      '(',
-      field('address', $.assertion),
-      ',',
-      optional(seq(field('type', $.type_descriptor), ',')),
-      field('value', $.assertion),
-      ')',
+      seq('(',
+          field('address', $.assertion),
+          ',',
+          optional(seq(field('type', $.type_descriptor), ',')),
+          field('value', $.assertion),
+          ')',),
     )),
 
     undef_data_at_assertion: $ => prec(PREC.CALL, seq(
       'undef_data_at',
-      '(',
-      field('address', $.assertion),
-      optional(seq(',', field('type', $.type_descriptor))),
-      ')',
+      seq('(',
+          field('address', $.assertion),
+          optional(seq(',', field('type', $.type_descriptor))),
+          ')',),
     )),
 
     field_address_assertion: $ => prec(PREC.CALL, seq(
       'field_address',
-      '(',
-      field('pointer', $.assertion),
-      optional(seq(',', field('type', $.type_descriptor))),
-      ',',
-      field('field', $._field_identifier),
-      ')',
+      seq('(',
+          field('pointer', $.assertion),
+          optional(seq(',', field('type', $.type_descriptor))),
+          ',',
+          field('field', $._field_identifier),
+          ')',),
     )),
 
     // Expressions
@@ -1932,7 +1972,7 @@ function commaSep1(rule) {
  */
 function annotation(rule) {
   return choice(
-    seq('//@', rule, '\r?\n'),
+    seq('//@', rule, /\r?\n/),
     seq('/*@', rule, '*/'),
   );
 }

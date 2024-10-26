@@ -124,6 +124,18 @@
         "named": true
       },
       {
+        "type": "branch_clear_annotation",
+        "named": true
+      },
+      {
+        "type": "branch_join_annotation",
+        "named": true
+      },
+      {
+        "type": "branch_name_annotation",
+        "named": true
+      },
+      {
         "type": "do_annotation",
         "named": true
       },
@@ -276,11 +288,11 @@
         "named": true
       },
       {
-        "type": "bool_atype",
+        "type": "atype_identifier",
         "named": true
       },
       {
-        "type": "identifier",
+        "type": "bool_atype",
         "named": true
       },
       {
@@ -854,6 +866,24 @@
           }
         ]
       },
+      "branch": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      },
       "ghost": {
         "multiple": true,
         "required": false,
@@ -1132,7 +1162,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "atype_identifier",
             "named": true
           }
         ]
@@ -1158,7 +1188,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "atype_identifier",
             "named": true
           }
         ]
@@ -1428,6 +1458,137 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "branch_clear_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "branch_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "branch_join_annotation",
+    "named": true,
+    "fields": {
+      "branch": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      },
+      "join": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      },
+      "new_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "branch_name_annotation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "branch_selector_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "branch_selector",
+    "named": true,
+    "fields": {
+      "branch": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assertion",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "branch_selector_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "branch_selector",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2025,6 +2186,21 @@
     }
   },
   {
+    "type": "definitional_atype_identifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "atype_identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "definitional_identifier",
     "named": true,
     "fields": {},
@@ -2042,16 +2218,35 @@
   {
     "type": "do_annotation",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "scope_identifier",
-          "named": true
-        }
-      ]
+    "fields": {
+      "branch": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      },
+      "scope": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "scope_identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2302,7 +2497,7 @@
             "named": true
           },
           {
-            "type": "definitional_identifier",
+            "type": "definitional_atype_identifier",
             "named": true
           }
         ]
@@ -3110,7 +3305,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "atype_identifier",
             "named": true
           }
         ]
@@ -5453,6 +5648,10 @@
         {
           "type": "scope_identifier",
           "named": true
+        },
+        {
+          "type": "spec_identifier",
+          "named": true
         }
       ]
     }
@@ -5461,6 +5660,24 @@
     "type": "which_implies_annotation",
     "named": true,
     "fields": {
+      "branch": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "all",
+            "named": false
+          },
+          {
+            "type": "branch_identifier",
+            "named": true
+          },
+          {
+            "type": "unnamed",
+            "named": false
+          }
+        ]
+      },
       "postcondition": {
         "multiple": false,
         "required": true,
@@ -5524,10 +5741,6 @@
     "named": false
   },
   {
-    "type": "\r?\n",
-    "named": false
-  },
-  {
     "type": "!",
     "named": false
   },
@@ -5581,6 +5794,10 @@
   },
   {
     "type": "#include",
+    "named": false
+  },
+  {
+    "type": "$",
     "named": false
   },
   {
@@ -5761,6 +5978,10 @@
   },
   {
     "type": "Assert",
+    "named": false
+  },
+  {
+    "type": "Branch",
     "named": false
   },
   {
@@ -5992,6 +6213,10 @@
     "named": false
   },
   {
+    "type": "all",
+    "named": false
+  },
+  {
     "type": "asm",
     "named": false
   },
@@ -6000,11 +6225,19 @@
     "named": true
   },
   {
+    "type": "atype_identifier",
+    "named": true
+  },
+  {
     "type": "auto",
     "named": false
   },
   {
     "type": "bool_atype",
+    "named": true
+  },
+  {
+    "type": "branch_identifier",
     "named": true
   },
   {
@@ -6022,6 +6255,10 @@
   {
     "type": "character",
     "named": true
+  },
+  {
+    "type": "clear",
+    "named": false
   },
   {
     "type": "comment",
@@ -6132,6 +6369,14 @@
     "named": true
   },
   {
+    "type": "into",
+    "named": false
+  },
+  {
+    "type": "join",
+    "named": false
+  },
+  {
     "type": "list_atype",
     "named": true
   },
@@ -6154,6 +6399,10 @@
   {
     "type": "ms_unsigned_ptr_modifier",
     "named": true
+  },
+  {
+    "type": "name",
+    "named": false
   },
   {
     "type": "nat_atype",
@@ -6300,6 +6549,10 @@
     "named": false
   },
   {
+    "type": "unnamed",
+    "named": false
+  },
+  {
     "type": "unsigned",
     "named": false
   },
@@ -6317,6 +6570,10 @@
   },
   {
     "type": "while",
+    "named": false
+  },
+  {
+    "type": "with",
     "named": false
   },
   {
